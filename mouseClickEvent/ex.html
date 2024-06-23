@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마우스 무브 이벤트</title>
+    <style>
+        .mouseImg{
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            padding: 0;
+            border: none;
+        }
+        .mouseImg img{
+            width: 99%;
+            height: 99%;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <button type="button" class="mouseImg" id="btn"><img src="bit.png" alt="비트로고"></button>
+    <script>
+        const coordinate = document.querySelector(".coordinate");
+        const MI = document.querySelector(".mouseImg");
+        let mousestate = false;
+
+        btn.addEventListener("mousedown", (e) => {
+            mousestate = true;
+        });
+
+        btn.addEventListener("mouseup", (e) => {
+            mousestate = false;
+        });
+
+        document.addEventListener("mousemove", (e) => {
+            if(mousestate) {               
+                MI.style.left = `${e.clientX}px`;
+                MI.style.top = `${e.clientY}px`;  
+            }
+        });
+    </script>
+</body>
+</html>
