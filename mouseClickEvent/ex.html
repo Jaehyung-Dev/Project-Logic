@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>마우스 무브 이벤트</title>
+    <title>상담 로고</title>
     <style>
         .mouseImg{
             position: absolute;
@@ -13,16 +13,17 @@
             border: none;
         }
         .mouseImg img{
-            width: 99%;
-            height: 99%;
+            width: 100%;
+            height: 100%;
             display: block;
+            user-select: none;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
     <button type="button" class="mouseImg" id="btn"><img src="bit.png" alt="비트로고"></button>
     <script>
-        const coordinate = document.querySelector(".coordinate");
         const MI = document.querySelector(".mouseImg");
         let mousestate = false;
 
