@@ -23,10 +23,13 @@
                 <ul class="nav_menu">
                     <li><a href="#">커뮤니티</a></li>
                     <li><a href="#">스토어</a></li>
-                    <li>
-                        <img id="weatherImg" src="image/sunny.png" alt="날씨 이미지" style="width: 30px; margin-left: 10px;">
-                        <p id="result" style="font-size: 0.6rem; font-weight: bold;"></p>
-                    </li>
+                    <div id="weather">
+                        <li style="display: flex;">
+                            <img id="weatherImg" src="#" alt="날씨 이미지">
+                            <img id="weatherLine" src="image/weatherLine.svg" alt="라인 이미지">
+                            <p id="result"></p>
+                        </li>
+                    </div>
                 </ul>
             </div>
         </div>
@@ -94,53 +97,101 @@
         </svg>        
     </div> -->
     <script>
-        let time = 0;
-        let timestr = '1200';
-        const now = new Date(); 
-        let zerohour = '0' + now.getHours();
-        let hour = zerohour.substr(-2);
-        let url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=gIQrlKBkoGwsDw%2BrhZZZ47LwsVb%2BsbXkagAhe20dhc5nBBIQUxXsw7PB38hiMm8JNRN%2FnVI23Kv6glqRx3C94Q%3D%3D&pageNo=1&numOfRows=1000&dataType=JSON&base_date=20240702&base_time=${hour}00&nx=61&ny=126`;
+        const now = new Date();
+        let nowMonth = now.getMonth()+1;
+        let zeroMonth = '0' + nowMonth;
+        let zeroDate = '0' + now.getDate();
+        let defaultHour = now.getHours();
+
+        if(defaultHour < 5){
+            defaultHour = 2;
+        } else if(defaultHour < 8) {
+            defaultHour = 5;
+        } else if(defaultHour < 11) {
+            defaultHour = 8;
+        } else if(defaultHour < 14) {
+            defaultHour = 11;
+        } else if(defaultHour < 17) {
+            defaultHour = 14;
+        } else if(defaultHour < 20) {
+            defaultHour = 17;
+        } else if(defaultHour < 23) {
+            defaultHour = 20;
+        } else if(defaultHour < 2) {
+            defaultHour = 21;
+        }
+        let zeroHour = '0' + defaultHour;
+
+        let year = now.getFullYear();
+        let month = zeroMonth.substr(-2);
+        let date = zeroDate.substr(-2);
+        let hour = zeroHour.substr(-2);
+        let fulldate = year + month + date;
+        let url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=gIQrlKBkoGwsDw%2BrhZZZ47LwsVb%2BsbXkagAhe20dhc5nBBIQUxXsw7PB38hiMm8JNRN%2FnVI23Kv6glqRx3C94Q%3D%3D&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${fulldate}&base_time=${hour}00&nx=61&ny=126`;
+        // let url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=gIQrlKBkoGwsDw%2BrhZZZ47LwsVb%2BsbXkagAhe20dhc5nBBIQUxXsw7PB38hiMm8JNRN%2FnVI23Kv6glqRx3C94Q%3D%3D&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${year}${month}${date}&base_time=0530&nx=61&ny=126`;
+        
         let temperature;
         let rain;
+        let quantity;
+        let tempNum = 0; // 온도
+        let rainNum = 9; // 강수량
+        let quantityNum = 7; // 강수확률
+
         $.getJSON(url, function(data) {
-                rain = data.response.body.items.item[2].obsrValue;
-                temperature = data.response.body.items.item[3].obsrValue;
+                temperature = data.response.body.items.item[tempNum].fcstValue;
+                rain = data.response.body.items.item[rainNum].fcstValue;
+                quantity = data.response.body.items.item[quantityNum].fcstValue;
                 // console.log(url);
-                // console.log(data);
-                // $('#result').text(`기온 : ${temperature}˚ 강수량 : ${rain}mm`);
-                $('#result').html(`<span">기온 : ${temperature}˚</span><p>강수량 : ${rain}mm</p>`);
-                rain = parseInt(rain);
-                if(rain < 1) {
+                console.log(quantity);
+                if(quantity <= 10) {
                     // 맑음 
-                    $('#weatherImg').attr('src', 'image/sunny.png');
-                } else if(rain < 5){
-                    // 보통 비
-                    $('#weatherImg').attr('src', "image/rain.png");
+                    $('#weatherImg').attr('src', 'image/sunny.svg');
+                    $('#result').html(`<div>${temperature} ˚C<br>맑음</div>`);
+                } else if(quantity < 50){
+                    // 흐림
+                    $('#weatherImg').attr('src', "image/rainny.svg");
+                    $('#result').html(`<div>${temperature} ˚C<br>흐림</div>`);
                 } else {
-                    // 강한 비
-                    $('#weatherImg').attr('src', "image/strongRain.png");
+                    // 비
+                    $('#weatherImg').attr('src', "image/strongRainny.svg");
+                    $('#result').html(`<div>${temperature} ˚C<br> 비(${rain})</div>`);
                 }
             });
 
-        const interval = setInterval(() => {
-            let newurl = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=gIQrlKBkoGwsDw%2BrhZZZ47LwsVb%2BsbXkagAhe20dhc5nBBIQUxXsw7PB38hiMm8JNRN%2FnVI23Kv6glqRx3C94Q%3D%3D&pageNo=1&numOfRows=1000&dataType=JSON&base_date=20240702&base_time=${hour}00&nx=61&ny=126`;
-            // 일단 hour--로 처리 해두고 -> 내일 실시간 처리로 로직 변경 
-            hour--;
-            $.getJSON(newurl, function(data) {
-                rain = data.response.body.items.item[2].obsrValue;
-                temperature = data.response.body.items.item[3].obsrValue;
+        // location.reload();
 
-                $('#result').html(`<span">기온 : ${temperature}˚</span><p>강수량 : ${rain}mm</p>`);
-                rain = parseInt(rain);
-                if(rain < 1) {
-                    $('#weatherImg').attr('src', 'image/sunny.png');
-                } else if(rain < 5) {
-                    $('#weatherImg').attr('src', "image/rain.png");
-                } else {
-                    $('#weatherImg').attr('src', "image/strongRain.png");
-                }
-            });
-        }, 10000);
+        // const interval = setInterval(() => {
+        //     second++;
+        //     if(second > 59) {
+        //         second = 0;
+        //         minute++;
+        //     }
+        //     if(minute > 59) {
+        //         minute = 0;
+        //         hour++;
+        //         let newurl = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=gIQrlKBkoGwsDw%2BrhZZZ47LwsVb%2BsbXkagAhe20dhc5nBBIQUxXsw7PB38hiMm8JNRN%2FnVI23Kv6glqRx3C94Q%3D%3D&pageNo=1&numOfRows=1000&dataType=JSON&base_date=${year}${month}${date}&base_time=${hour}00&nx=61&ny=126`;
+        //         $.getJSON(newurl, function(data) {
+                    
+        //             temperature = data.response.body.items.item[tempNum].fcstValue;
+        //             rain = data.response.body.items.item[rainNum].fcstValue;
+        //             quantity = data.response.body.items.item[quantityNum].fcstValue;
+                    
+        //             if(quantity <= 10) {
+        //                 // 맑음 
+        //                 $('#weatherImg').attr('src', 'image/sunny.svg');
+        //                 $('#result').html(`<div>${temperature} ˚C<br>맑음</div>`);
+        //             } else if(quantity < 50){
+        //                 // 흐림
+        //                 $('#weatherImg').attr('src', "image/rainny.svg");
+        //                 $('#result').html(`<div>${temperature} ˚C<br>흐림</div>`);
+        //             } else {
+        //                 // 비
+        //                 $('#weatherImg').attr('src', "image/strongRainny.svg");
+        //                 $('#result').html(`<div>${temperature} ˚C<br> 비(${rain})</div>`);
+        //             }
+        //         });
+        //     }
+        // }, 1000);
     </script>
 </body>
 </html>

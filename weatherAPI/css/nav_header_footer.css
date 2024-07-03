@@ -114,3 +114,32 @@ footer .f_container {
 footer p {
     margin: 8px 0;
 }
+
+/* JH */
+#weather {
+    height: 55px;
+    border: solid #23C961 1px; 
+    border-radius: 10px; 
+    background-color: #EAFFF2;
+    margin-left: 30px;
+}
+
+#weatherImg {
+    width: 45px; 
+    height: 35px; 
+    margin-top: 20px;
+    margin-left: -10px;
+}
+
+#weatherLine {
+    margin-left: 10px;
+}
+
+#result {
+    text-align: center; 
+    margin-left: 15px;
+    margin-top: 20px; 
+    font-size: 0.8rem; 
+    font-weight: bold;
+    color: #23C961;
+}
