@@ -144,8 +144,6 @@
                 temperature = data.response.body.items.item[tempNum].fcstValue;
                 rain = data.response.body.items.item[rainNum].fcstValue;
                 quantity = data.response.body.items.item[quantityNum].fcstValue;
-                // console.log(url);
-                console.log(quantity);
                 if(quantity <= 10) {
                     // 맑음 
                     $('#weatherImg').attr('src', 'image/sunny.svg');
@@ -173,8 +171,6 @@
             ) {
                 location.reload();
             }
-            console.log(checkMinute);
-            console.log(checkHour);
         }, 60000);
     </script>
 </body>
