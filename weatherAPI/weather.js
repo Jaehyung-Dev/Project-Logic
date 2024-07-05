@@ -33,9 +33,11 @@ let url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFc
 let temperature;
 let rain;
 let quantity;
+let snow;
 let tempNum = 0; // 온도
 let rainNum = 9; // 강수량
 let quantityNum = 7; // 강수확률
+let snowNum = 11; // 적설량
 
 /// 시간 체크 변수
 let checkMinute = now.getMinutes();
@@ -45,6 +47,7 @@ $.getJSON(url, function(data) {
     temperature = data.response.body.items.item[tempNum].fcstValue;
     rain = data.response.body.items.item[rainNum].fcstValue;
     quantity = data.response.body.items.item[quantityNum].fcstValue;
+    snow = data.response.body.items.item[snowNum].fcstValue;
 
     if(quantity <= 10) {
         // 맑음 
@@ -55,9 +58,15 @@ $.getJSON(url, function(data) {
         $('#weatherImg').attr('src', "image/rainny.svg");
         $('#result').html(`<div>${temperature} ˚C<br>흐림</div>`);
     } else {
-        // 비
-        $('#weatherImg').attr('src', "image/strongRainny.svg");
-        $('#result').html(`<div>${temperature} ˚C<br> 비(${rain})</div>`);
+        if(temperature > 0) {
+            // 비
+            $('#weatherImg').attr('src', "image/strongRainny.svg");
+            $('#result').html(`<div>${temperature} ˚C<br> 비(${rain})</div>`);
+        } else {
+            // 눈
+            $('#weatherImg').attr('src', "image/snowing.svg");
+            $('#result').html(`<div>${temperature} ˚C<br> 눈(${snow})</div>`);
+        }
     }
 });
 
